@@ -52,22 +52,23 @@ void placeItem(ITEM item){
     // We start by assering that the buffer is not yet full
     assert(buffer[BUFFER_SIZE - 1] == NULL);
     assert(numerItemsInBuffer < BUFFER_SIZE);
-    // We find the first free place in the buffer 
-    while(buffer[i] != NULL){
-        i += 1;        
-    }
-    // And place the item there
-    buffer[i] = item;
+    //And do another consistency check: the item numerItemsInBuffer should be free
+    assert(buffer[numerItemsInBuffer] == NULL);
+    // We place the item in the first free place
+    buffer[numerItemsInBuffer] = item;
     // we increment the nr of items in the buffer
     numerItemsInBuffer += 1;
     // And finally we signal the consumer that has to come into action next
-    pthread_cond_signal(&consumerVariables[itemToDest(item)]);
+    pthread_cond_signal(&consumerVariables[itemToDest(buffer[0])]);
 }
 
 ITEM takeItem(){
     int i = 0;
     // We start by asserting that the bufer is not empty
     assert(buffer[0] != NULL);
+    assert(numerItemsInBuffer > 0);
+    // And do another consistencty check: the first item before numerItemsInBuffer should not be free
+    assert(buffer[numerItemsInBuffer] != NULL);
     // We store the return value (the first value in the buffer)
     int rv = buffer[0];   
     // We move all items one place to the front
