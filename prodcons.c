@@ -61,7 +61,7 @@ void placeItem(ITEM item){
     // we increment the nr of items in the buffer
     numerItemsInBuffer += 1;
     // And finally we signal the consumer that has to come into action next
-    pthread_cond_signal(&consumerVariables[itemToDest(item)]);
+    pthread_cond_signal(&consumerVariables[itemToDest(buffer[0])]);
 }
 
 ITEM takeItem(){
